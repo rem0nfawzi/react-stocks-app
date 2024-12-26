@@ -8,19 +8,16 @@ interface StockResponse {
   next_url: string | null;
 }
 
-export const fetchStocks = async () => {
+export const fetchStocks = async (
+  apiUrl: string = "https://api.polygon.io/v3/reference/tickers?active=true&limit=24&apiKey=tiLfPn2sjd2dg_f5iwChGMC3szC3GXpY"
+) => {
   try {
-    const stocksRes = await axios.get<StockResponse>(
-      "https://api.polygon.io/v3/reference/tickers?active=true&limit=24&apiKey=tiLfPn2sjd2dg_f5iwChGMC3szC3GXpY"
-    );
-
-    console.log({ res: stocksRes });
+    const stocksRes = await axios.get<StockResponse>(apiUrl);
 
     if (!stocksRes.data?.results) {
       throw new Error("Invalid response format: missing results");
     }
 
-    sessionStorage.setItem("stocks", JSON.stringify(stocksRes.data.results));
     return {
       list: stocksRes.data.results,
       nextPageUrl: stocksRes.data.next_url,

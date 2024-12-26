@@ -23,6 +23,9 @@ export default {
         200: "#d1d5db",
         400: "#bdc3c7",
       },
+      red: {
+        500: "#f00",
+      },
     },
     extend: {},
   },

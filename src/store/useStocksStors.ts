@@ -5,7 +5,6 @@ import { persist, createJSONStorage } from "zustand/middleware";
 type StringOrNull = string | null;
 
 export interface LoadMoreStocks {
-  loading: boolean;
   stocks: Stock[];
   error: StringOrNull;
 }
@@ -15,10 +14,21 @@ interface StocksStore {
   error: StringOrNull;
   nextPageUrl: StringOrNull;
   loading: boolean;
+  searchStocks: {
+    stocks: Stock[];
+    error: StringOrNull;
+    nextPageUrl: StringOrNull;
+  };
   setStocks: (stocks: Stock[], nexPageUrl: StringOrNull) => void;
   setError: (error: string) => void;
+  setLoading: (loading: boolean) => void;
   setLoadMoreStocks: (loadMoreStocks: LoadMoreStocks) => void;
   setNextPageUrl: (nextPageUrl: string) => void;
+  setSearchStocks: (payload: {
+    stocks: Stock[];
+    error: StringOrNull;
+    nextPageUrl: StringOrNull;
+  }) => void;
 }
 
 export const useStocksStore = create<StocksStore>()(
@@ -29,23 +39,40 @@ export const useStocksStore = create<StocksStore>()(
       nextPageUrl: null,
       loading: false,
       loadMoreStocks: {
-        loading: false,
         stocks: [],
         error: null,
       },
+      searchStocks: {
+        stocks: [],
+        error: null,
+        nextPageUrl: null,
+      },
 
       // Methods
-      setStocks: (stocks: Stock[], nexPageUrl: StringOrNull) =>
+      setStocks: (stocks, nexPageUrl) =>
         set(() => ({ stocks, error: null, nextPageUrl: nexPageUrl })),
-      setError: (error: string) => set(() => ({ error })),
-      setLoading: (loading: boolean) => set(() => ({ loading })),
-      setLoadMoreStocks: (loadMoreStocks: LoadMoreStocks) =>
-        set(() => ({ loadMoreStocks })),
-      setNextPageUrl: (nextPageUrl: string) => set(() => ({ nextPageUrl })),
+      setError: (error) => set(() => ({ error })),
+      setLoading: (loading) => set(() => ({ loading })),
+      setLoadMoreStocks: (loadMoreStocks) => set(() => ({ loadMoreStocks })),
+      setNextPageUrl: (nextPageUrl) => set(() => ({ nextPageUrl })),
+      setSearchStocks: (payload) =>
+        set(() => ({
+          searchStocks: {
+            stocks: payload.stocks || [],
+            error: payload.error || null,
+            nextPageUrl: payload.nextPageUrl,
+          },
+        })),
     }),
     {
       name: "stocks-storage",
       storage: createJSONStorage(() => sessionStorage),
+      partialize: (state) => ({
+        stocks: state.stocks,
+        nextPageUrl: state.nextPageUrl,
+        loadMoreStocks: state.loadMoreStocks,
+        searchStocks: state.searchStocks,
+      }),
     }
   )
 );

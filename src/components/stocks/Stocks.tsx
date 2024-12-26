@@ -6,10 +6,21 @@ import Error from "./error/Error";
 import { fetchStocks } from "../../lib/stockApis";
 import { useStocksStore } from "../../store/useStocksStors";
 import LoadMore from "./load-more/LoadMore";
+import { useSearchStore } from "../../store/useSearchStore";
+import { getCurrentMessage } from "./getCurrentMessage";
 
 const Stocks = () => {
-  const { stocks, error, loadMoreStocks, setStocks, setError } =
-    useStocksStore();
+  const {
+    stocks,
+    searchStocks,
+    error,
+    loading,
+    loadMoreStocks,
+    setStocks,
+    setError,
+  } = useStocksStore();
+  const { searchText } = useSearchStore();
+
   useEffect(() => {
     if (stocks.length === 0)
       fetchStocks()
@@ -20,19 +31,37 @@ const Stocks = () => {
   }, [setError, setStocks, stocks]);
 
   const allStocks = [...stocks, ...loadMoreStocks.stocks];
-  console.log({ allStocks });
+  const showSearchedStocks = searchText.length > 0;
 
+  const currentMessage = getCurrentMessage({
+    loading,
+    searchText,
+    searchStocks,
+    showSearchedStocks,
+    allStocks,
+  });
   return (
     <div className="container pb-12">
       <h1 className="text-2xl font-bold text-white my-16">Explore Stocks</h1>
       <Search />
       <div className="grid grid-cols-3 gap-6 mb-6">
-        {allStocks.map((stock: Stock) => (
-          <StockItem key={stock.ticker} stock={stock} />
-        ))}
+        {!showSearchedStocks &&
+          allStocks.map((stock: Stock) => (
+            <StockItem key={stock.ticker} stock={stock} />
+          ))}
+        {showSearchedStocks &&
+          searchStocks.stocks.map((stock: Stock) => (
+            <StockItem key={stock.ticker} stock={stock} />
+          ))}
       </div>
       {/* We always render the list cause the error may happen on page 2 for example */}
-      {error && <Error error={error} />}
+      {!currentMessage && error && <Error error={error} />}
+      {!currentMessage && loadMoreStocks.error && !error && (
+        <Error error={loadMoreStocks.error} />
+      )}
+      {currentMessage && (
+        <p className="text-white italic font-medium">{currentMessage}</p>
+      )}
       <LoadMore />
     </div>
   );

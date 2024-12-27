@@ -17,7 +17,10 @@ const Home = () => {
       </p>
       <p className="text-sm text-white absolute bottom-4 left-4 italic">
         By:{" "}
-        <a href="" className="font-bold capitalize">
+        <a
+          href="https://www.linkedin.com/in/rem0nfawzi/"
+          className="font-bold capitalize"
+        >
           remon fawzi
         </a>
       </p>

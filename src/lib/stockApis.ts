@@ -9,10 +9,12 @@ interface StockResponse {
 }
 
 export const fetchStocks = async (
-  apiUrl: string = "https://api.polygon.io/v3/reference/tickers?active=true&limit=24&apiKey=tiLfPn2sjd2dg_f5iwChGMC3szC3GXpY"
+  apiUrl: string = "https://api.polygon.io/v3/reference/tickers?active=true&limit=24"
 ) => {
   try {
-    const stocksRes = await axios.get<StockResponse>(apiUrl);
+    const stocksRes = await axios.get<StockResponse>(
+      apiUrl + `&apiKey=tiLfPn2sjd2dg_f5iwChGMC3szC3GXpY`
+    );
 
     if (!stocksRes.data?.results) {
       throw new Error("Invalid response format: missing results");

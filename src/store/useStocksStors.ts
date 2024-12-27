@@ -4,13 +4,9 @@ import { persist, createJSONStorage } from "zustand/middleware";
 
 type StringOrNull = string | null;
 
-export interface LoadMoreStocks {
-  stocks: Stock[];
-  error: StringOrNull;
-}
 interface StocksStore {
   stocks: Stock[];
-  loadMoreStocks: LoadMoreStocks;
+  loadMoreStocks: Stock[];
   error: StringOrNull;
   nextPageUrl: StringOrNull;
   loading: boolean;
@@ -20,9 +16,9 @@ interface StocksStore {
     nextPageUrl: StringOrNull;
   };
   setStocks: (stocks: Stock[], nexPageUrl: StringOrNull) => void;
-  setError: (error: string) => void;
+  setError: (error: StringOrNull) => void;
   setLoading: (loading: boolean) => void;
-  setLoadMoreStocks: (loadMoreStocks: LoadMoreStocks) => void;
+  setLoadMoreStocks: (loadMoreStocks: Stock[]) => void;
   setNextPageUrl: (nextPageUrl: string) => void;
   setSearchStocks: (payload: {
     stocks: Stock[];
@@ -38,10 +34,7 @@ export const useStocksStore = create<StocksStore>()(
       error: null,
       nextPageUrl: null,
       loading: false,
-      loadMoreStocks: {
-        stocks: [],
-        error: null,
-      },
+      loadMoreStocks: [],
       searchStocks: {
         stocks: [],
         error: null,

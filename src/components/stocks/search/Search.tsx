@@ -3,7 +3,7 @@ import { useSearchStore } from "../../../store/useSearchStore";
 import { fetchStocks } from "../../../lib/stockApis";
 import { useStocksStore } from "../../../store/useStocksStors";
 
-let timeoutId: number | null = null;
+let timeoutId: ReturnType<typeof setTimeout> | null = null;
 const Search = () => {
   const { searchText, setSearchText } = useSearchStore();
   const { setError, setSearchStocks, setLoading } = useStocksStore();
@@ -11,6 +11,7 @@ const Search = () => {
   const handleChange = useCallback(
     (e: ChangeEvent) => {
       const text = (e.target as HTMLInputElement).value;
+      setError(null);
       setSearchText(text);
       setSearchStocks({ stocks: [], error: null, nextPageUrl: null });
       if (text.length < 3) return;

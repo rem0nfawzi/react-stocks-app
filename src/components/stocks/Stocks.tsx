@@ -21,17 +21,24 @@ const Stocks = () => {
     setError,
   } = useStocksStore();
   const { searchText } = useSearchStore();
+  const { setLoading } = useStocksStore();
 
   useEffect(() => {
-    if (stocks.length === 0)
+    if (stocks.length === 0) {
+      setLoading(true);
       fetchStocks()
-        .then((stocksData) =>
-          setStocks(stocksData.list, stocksData.nextPageUrl)
-        )
-        .catch((error) => setError(error.message));
-  }, [setError, setStocks, stocks]);
+        .then((stocksData) => {
+          setStocks(stocksData.list, stocksData.nextPageUrl);
+          setLoading(false);
+        })
+        .catch((error) => {
+          setError(error.message);
+          setLoading(false);
+        });
+    }
+  }, [setError, setLoading, setStocks, stocks]);
 
-  const allStocks = [...stocks, ...loadMoreStocks.stocks];
+  const allStocks = [...stocks, ...loadMoreStocks];
   const showSearchedStocks = searchText.length > 0;
 
   const currentMessage = getCurrentMessage({
@@ -40,7 +47,9 @@ const Stocks = () => {
     searchStocks,
     showSearchedStocks,
     allStocks,
+    error,
   });
+
   return (
     <div className="container p-6">
       <h1 className="text-2xl font-bold text-white my-16">Explore Stocks</h1>
@@ -60,15 +69,12 @@ const Stocks = () => {
             <StockItem key={stock.ticker} stock={stock} />
           ))}
       </div>
+      <LoadMore />
       {/* We always render the list cause the error may happen on page 2 for example */}
       {!currentMessage && error && <Error error={error} />}
-      {!currentMessage && loadMoreStocks.error && !error && (
-        <Error error={loadMoreStocks.error} />
-      )}
       {currentMessage && (
         <p className="text-white italic font-medium">{currentMessage}</p>
       )}
-      <LoadMore />
     </div>
   );
 };

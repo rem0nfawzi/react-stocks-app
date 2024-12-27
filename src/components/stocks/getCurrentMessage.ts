@@ -8,6 +8,7 @@ interface Payload {
   };
   showSearchedStocks: boolean;
   allStocks: Stock[];
+  error: string | null;
 }
 export const getCurrentMessage = ({
   loading,
@@ -15,9 +16,11 @@ export const getCurrentMessage = ({
   searchStocks,
   showSearchedStocks,
   allStocks,
+  error,
 }: Payload) => {
   let currentMessage: null | string = null;
-  if (loading) currentMessage = "Loading ...";
+  if (error) currentMessage = null;
+  else if (loading) currentMessage = "Loading ...";
   else if (searchText.length > 0 && searchText.length < 3)
     currentMessage = "Please enter +3 chararcter to start searching.";
   else if (showSearchedStocks && searchStocks.stocks.length === 0)

@@ -1,11 +1,12 @@
 import { useEffect, useRef } from "react";
 import { fetchStocks } from "../../../lib/stockApis";
-import { LoadMoreStocks, useStocksStore } from "../../../store/useStocksStors";
+import { useStocksStore } from "../../../store/useStocksStors";
 import { useSearchStore } from "../../../store/useSearchStore";
+import { Stock } from "../../../types/globalTypes";
 
 export const useLoadMoreStocks: () => [
   React.RefObject<HTMLDivElement>,
-  LoadMoreStocks
+  Stock[]
 ] = () => {
   const {
     nextPageUrl,
@@ -15,6 +16,7 @@ export const useLoadMoreStocks: () => [
     setLoadMoreStocks,
     setNextPageUrl,
     setLoading,
+    setError,
   } = useStocksStore();
   const { searchText } = useSearchStore();
   const targetRef = useRef<HTMLDivElement>(null);
@@ -26,15 +28,6 @@ export const useLoadMoreStocks: () => [
     const observer = new IntersectionObserver(
       (entries) => {
         const [entry] = entries;
-
-        console.log("HERE 1", {
-          INTER: entry.isIntersecting,
-
-          nextPageUrl,
-          loading,
-          shouldWaitForSearch,
-        });
-
         if (
           entry.isIntersecting &&
           nextPageUrl &&
@@ -42,25 +35,18 @@ export const useLoadMoreStocks: () => [
           !shouldWaitForSearch
         ) {
           setLoading(true);
-          setTimeout(() => {
-            fetchStocks(
-              nextPageUrl + `&apiKey=tiLfPn2sjd2dg_f5iwChGMC3szC3GXpY`
-            )
-              .then((stocksData) => {
-                setLoadMoreStocks({
-                  stocks: [...loadMoreStocks.stocks, ...stocksData.list],
-                  error: null,
-                });
-                if (stocksData.nextPageUrl)
-                  setNextPageUrl(stocksData.nextPageUrl);
-
-                setLoading(false);
-              })
-              .catch((error) => {
-                setLoadMoreStocks({ ...loadMoreStocks, error: error.message });
-                setLoading(false);
-              });
-          }, 1000);
+          setError(null);
+          fetchStocks(nextPageUrl + `&apiKey=tiLfPn2sjd2dg_f5iwChGMC3szC3GXpY`)
+            .then((stocksData) => {
+              setLoading(false);
+              setLoadMoreStocks([...loadMoreStocks, ...stocksData.list]);
+              if (stocksData.nextPageUrl)
+                setNextPageUrl(stocksData.nextPageUrl);
+            })
+            .catch((error) => {
+              setError(error.message);
+              setLoading(false);
+            });
         }
       },
       { threshold: 0.5 }
@@ -75,14 +61,7 @@ export const useLoadMoreStocks: () => [
         observer.unobserve(element);
       }
     };
-  }, [
-    searchText,
-    stocks.length,
-    nextPageUrl,
-    setLoadMoreStocks,
-    setNextPageUrl,
-    setLoading,
-  ]);
+  }, [nextPageUrl, shouldWaitForSearch]);
 
   return [targetRef, loadMoreStocks];
 };

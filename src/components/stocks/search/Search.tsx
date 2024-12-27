@@ -12,9 +12,9 @@ const Search = () => {
     (e: ChangeEvent) => {
       const text = (e.target as HTMLInputElement).value;
       setSearchText(text);
+      setSearchStocks({ stocks: [], error: null, nextPageUrl: null });
       if (text.length < 3) return;
       setLoading(true);
-      setSearchStocks({ stocks: [], error: null, nextPageUrl: null });
       if (timeoutId) clearTimeout(timeoutId);
       timeoutId = setTimeout(() => {
         fetchStocks(

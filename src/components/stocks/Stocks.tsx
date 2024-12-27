@@ -8,6 +8,7 @@ import { useStocksStore } from "../../store/useStocksStors";
 import LoadMore from "./load-more/LoadMore";
 import { useSearchStore } from "../../store/useSearchStore";
 import { getCurrentMessage } from "./getCurrentMessage";
+import { cn } from "../../lib/utils";
 
 const Stocks = () => {
   const {
@@ -41,10 +42,15 @@ const Stocks = () => {
     allStocks,
   });
   return (
-    <div className="container pb-12">
+    <div className="container p-6">
       <h1 className="text-2xl font-bold text-white my-16">Explore Stocks</h1>
       <Search />
-      <div className="grid grid-cols-3 gap-6 mb-6">
+      <div
+        className={cn(
+          "grid grid-cols-1 gap-6 mb-6",
+          "sm:grid-cols-2 md:grid-cols-3"
+        )}
+      >
         {!showSearchedStocks &&
           allStocks.map((stock: Stock) => (
             <StockItem key={stock.ticker} stock={stock} />

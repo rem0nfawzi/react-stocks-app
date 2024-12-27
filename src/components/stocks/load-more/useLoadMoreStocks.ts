@@ -27,6 +27,14 @@ export const useLoadMoreStocks: () => [
       (entries) => {
         const [entry] = entries;
 
+        console.log("HERE 1", {
+          INTER: entry.isIntersecting,
+
+          nextPageUrl,
+          loading,
+          shouldWaitForSearch,
+        });
+
         if (
           entry.isIntersecting &&
           nextPageUrl &&
@@ -68,6 +76,7 @@ export const useLoadMoreStocks: () => [
       }
     };
   }, [
+    searchText,
     stocks.length,
     nextPageUrl,
     setLoadMoreStocks,

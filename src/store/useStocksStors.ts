@@ -12,7 +12,6 @@ interface StocksStore {
   loading: boolean;
   searchStocks: {
     stocks: Stock[];
-    error: StringOrNull;
     nextPageUrl: StringOrNull;
   };
   setStocks: (stocks: Stock[], nexPageUrl: StringOrNull) => void;
@@ -22,7 +21,6 @@ interface StocksStore {
   setNextPageUrl: (nextPageUrl: string) => void;
   setSearchStocks: (payload: {
     stocks: Stock[];
-    error: StringOrNull;
     nextPageUrl: StringOrNull;
   }) => void;
 }
@@ -52,7 +50,6 @@ export const useStocksStore = create<StocksStore>()(
         set(() => ({
           searchStocks: {
             stocks: payload.stocks || [],
-            error: payload.error || null,
             nextPageUrl: payload.nextPageUrl,
           },
         })),

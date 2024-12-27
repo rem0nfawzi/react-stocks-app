@@ -19,9 +19,9 @@ const Stocks = () => {
     loadMoreStocks,
     setStocks,
     setError,
+    setLoading,
   } = useStocksStore();
   const { searchText } = useSearchStore();
-  const { setLoading } = useStocksStore();
 
   useEffect(() => {
     if (stocks.length === 0) {
@@ -73,7 +73,9 @@ const Stocks = () => {
       {/* We always render the list cause the error may happen on page 2 for example */}
       {!currentMessage && error && <Error error={error} />}
       {currentMessage && (
-        <p className="text-white italic font-medium">{currentMessage}</p>
+        <p data-testid="current-msg" className="text-white italic font-medium">
+          {currentMessage}
+        </p>
       )}
     </div>
   );

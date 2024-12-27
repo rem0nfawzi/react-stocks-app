@@ -13,7 +13,7 @@ const Search = () => {
       const text = (e.target as HTMLInputElement).value;
       setError(null);
       setSearchText(text);
-      setSearchStocks({ stocks: [], error: null, nextPageUrl: null });
+      setSearchStocks({ stocks: [], nextPageUrl: null });
       if (text.length < 3) return;
       setLoading(true);
       if (timeoutId) clearTimeout(timeoutId);
@@ -24,7 +24,6 @@ const Search = () => {
           .then((stocksData) => {
             setSearchStocks({
               stocks: stocksData.list,
-              error: null,
               nextPageUrl: stocksData.nextPageUrl,
             });
           })
